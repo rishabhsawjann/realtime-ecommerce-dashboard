@@ -215,6 +215,3 @@ MIT License - see LICENSE file for details
 4. Add tests if applicable
 5. Submit a pull request
 
-## 📞 Support
-
-For questions or issues, please open a GitHub issue or contact the development team. 
