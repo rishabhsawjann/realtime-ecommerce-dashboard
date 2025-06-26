@@ -1,0 +1,48 @@
+name: Deploy Infrastructure
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/deploy-infrastructure.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: infrastructure/package-lock.json
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+    
+    - name: Install dependencies
+      run: |
+        cd infrastructure
+        npm ci
+    
+    - name: Bootstrap CDK (if needed)
+      run: |
+        cd infrastructure
+        npx cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-east-1
+    
+    - name: Deploy infrastructure
+      run: |
+        cd infrastructure
+        npx cdk deploy --all --require-approval never
+      env:
+        CDK_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT_ID }}
+        CDK_DEFAULT_REGION: us-east-1 
