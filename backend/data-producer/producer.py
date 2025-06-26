@@ -6,7 +6,7 @@ import requests
 from datetime import datetime
 
 # Configurable API endpoint
-API_URL = os.environ.get('SALES_API_URL', 'http://localhost:3000/sales')
+API_URL = os.environ.get('SALES_API_URL', 'https://znnt2gynq2.execute-api.us-east-1.amazonaws.com/prod/sales')
 
 PRODUCTS = [
     {'id': 'P001', 'category': 'Electronics'},
